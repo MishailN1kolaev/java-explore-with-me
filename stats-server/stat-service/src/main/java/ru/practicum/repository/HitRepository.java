@@ -11,16 +11,18 @@ import java.util.List;
 
 public interface HitRepository extends JpaRepository<Hit, Long> {
 
-    @Query("SELECT new ru.practicum.HitStatsDto(...) FROM Hit h " +
-            "WHERE (:start IS NULL OR h.timestamp >= :start) " +
-            "AND (:end IS NULL OR h.timestamp <= :end) " +
-            "AND (:uris IS NULL OR h.uri IN :uris) " +
-            "GROUP BY h.uri, (CASE WHEN :unique IS TRUE THEN h.ip ELSE NULL END)")
+    @Query("select new ru.practicum.HitStatsDto(s.app, s.uri, " +
+            "count(case when :unique = true then distinct s.ip else s.uri end)) " +
+            "from Hit s " +
+            "where (:start is null or s.timestamp >= :start) " +
+            "and (:end is null or s.timestamp <= :end) " +
+            "and (:uris is null or s.uri in :uris) " +
+            "group by s.app, s.uri " +
+            "order by count(s.uri) desc")
     List<HitStatsDto> getHits(@Param("start") LocalDateTime start,
                               @Param("end") LocalDateTime end,
                               @Param("uris") List<String> uris,
                               @Param("unique") Boolean unique);
-
 
     @Query("select new ru.practicum.HitStatsDto(s.app, s.uri, count(s.uri)) " +
             "from Hit s where s.timestamp between :start and :end and s.uri in :uris " +
