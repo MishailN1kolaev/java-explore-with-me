@@ -26,21 +26,9 @@ public class HitServiceImpl implements HitService {
 
     @Override
     public List<HitStatsDto> getHit(String startSt, String endSt, List<String> uris, Boolean unique) {
-        LocalDateTime start = LocalDateTime.parse(startSt, Utils.DATE_FORMATTER);
-        LocalDateTime end = LocalDateTime.parse(endSt,Utils.DATE_FORMATTER);
-        if (!unique) {
-            if (uris == null) {
-                return repository.getHits(start, end);
-            } else {
-                return repository.getHitsUris(start, end, uris);
-            }
-        } else {
-            if (uris == null) {
-                return repository.getHitsUnique(start, end);
-            } else {
-                return repository.getHitsUrisUnique(start, end, uris);
+        LocalDateTime start = startSt != null ? LocalDateTime.parse(startSt, Utils.DATE_FORMATTER) : null;
+        LocalDateTime end = endSt != null ? LocalDateTime.parse(endSt, Utils.DATE_FORMATTER) : null;
 
-            }
-        }
+        return repository.getHits(start, end, uris, unique);
     }
 }
