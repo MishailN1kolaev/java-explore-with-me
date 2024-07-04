@@ -1,6 +1,4 @@
 package ru.practicum.model.event;
-
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.HitClient;
 import ru.practicum.HitDto;
-import ru.practicum.Utils;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.category.CategoryRepository;
 import ru.practicum.model.event.eventDto.EventFullDto;
@@ -308,7 +305,7 @@ public class EventServiceImpl implements EventService {
             event.setDescription(userEvent.getDescription());
         }
         if (userEvent.getEventDate() != null) {
-            LocalDateTime eventDate = LocalDateTime.parse(userEvent.getEventDate(), Utils.DATE_FORMATTER);
+            LocalDateTime eventDate = LocalDateTime.parse(userEvent.getEventDate(), formatter);
             if (eventDate.isBefore(LocalDateTime.now())) {
                 throw new ValidationException("Дата не может быть в прошлом");
             }
