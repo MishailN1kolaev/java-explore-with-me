@@ -2,9 +2,9 @@ package ru.practicum.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.HitDto;
 import ru.practicum.Utils;
 import ru.practicum.model.Hit;
+import ru.practicum.HitDto;
 
 import java.time.LocalDateTime;
 

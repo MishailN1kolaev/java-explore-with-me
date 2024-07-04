@@ -15,7 +15,7 @@ import java.util.List;
 public class HitClient extends BaseClient {
 
     @Autowired
-    public HitClient(@Value("${ewm-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public HitClient(@Value("${stat.server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + Utils.HIT))
@@ -30,6 +30,10 @@ public class HitClient extends BaseClient {
 
     public ResponseEntity<Object> getHit(LocalDateTime start, LocalDateTime end, List uris, Boolean unique) {
         return get("?start={start}&end={end}&uris={uris}&unique={unique}", start, end, uris, unique);
+    }
+
+    public ResponseEntity<Object> getHitClear(LocalDateTime start, LocalDateTime end) {
+        return get("?start={start}&end={end}", start, end);
     }
 
 
