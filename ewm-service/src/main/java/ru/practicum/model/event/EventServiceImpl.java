@@ -160,12 +160,12 @@ public class EventServiceImpl implements EventService {
             BooleanExpression byUserId = QEvent.event.initiator.id.in(initiatorIds);
             foundEvents = eventRepository.findAll(byUserId, page);
         } else {
-            return eventRepository.findAll(page).stream()
+            return foundEvents.stream()
                     .map(event -> EventMapper.mapToEventFullDto(event, 0))
                     .collect(Collectors.toList());
 
         }
-        return foundEvents.stream()
+        return StreamSupport.stream(foundEvents.spliterator(), false)
                 .map(event -> EventMapper.mapToEventFullDto(event, 0))
                 .collect(Collectors.toList());
 
