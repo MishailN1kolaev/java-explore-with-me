@@ -74,6 +74,11 @@ public class PrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto addRequestByUser(@PathVariable Long userId,
                                                     @RequestParam Long eventId) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return partRequestService.addPartRequest(userId, eventId);
     }
 
