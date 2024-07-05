@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.HitDto;
+import ru.practicum.Utils;
 import ru.practicum.service.HitService;
 import ru.practicum.ViewStats;
 
@@ -17,12 +18,12 @@ public class Controller {
     private final HitService hitService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/hit")
+    @PostMapping(Utils.HIT)
     public HitDto makeHit(@RequestBody HitDto hitDto) {
         return hitService.createHit(hitDto);
     }
 
-    @GetMapping("/stats")
+    @GetMapping(Utils.STATS)
     public List<ViewStats> getHits(@NonNull @RequestParam String start,
                                    @NonNull @RequestParam String end,
                                    @RequestParam(required = false) List<String> uris,
