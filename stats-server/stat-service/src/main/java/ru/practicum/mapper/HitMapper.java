@@ -7,7 +7,6 @@ import ru.practicum.Utils;
 import ru.practicum.model.Hit;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HitMapper {
