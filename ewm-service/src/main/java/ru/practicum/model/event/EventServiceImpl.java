@@ -117,7 +117,7 @@ public class EventServiceImpl implements EventService {
                                                Integer size) {
 
         PageRequest page = PageRequest.of(from / size, size);
-        Iterable<Event> foundEvents = null;
+        Page<Event> foundEvents = null;
         List<State> listOfStates = null;
         LocalDateTime start = null;
         LocalDateTime end = null;
@@ -168,7 +168,7 @@ public class EventServiceImpl implements EventService {
                     .collect(Collectors.toList());
 
         }
-        return StreamSupport.stream(foundEvents.spliterator(), false)
+        return foundEvents.stream()
                 .map(event -> EventMapper.mapToEventFullDto(event, 0))
                 .collect(Collectors.toList());
 
