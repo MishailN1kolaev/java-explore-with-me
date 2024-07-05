@@ -29,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Transactional(readOnly = true)
@@ -161,12 +160,12 @@ public class EventServiceImpl implements EventService {
             BooleanExpression byUserId = QEvent.event.initiator.id.in(initiatorIds);
             foundEvents = eventRepository.findAll(byUserId, page);
         } else {
-            return foundEvents.stream()
+            return eventRepository.findAll(page).stream()
                     .map(event -> EventMapper.mapToEventFullDto(event, 0))
                     .collect(Collectors.toList());
 
         }
-        return StreamSupport.stream(foundEvents.spliterator(), false)
+        return foundEvents.stream()
                 .map(event -> EventMapper.mapToEventFullDto(event, 0))
                 .collect(Collectors.toList());
 
