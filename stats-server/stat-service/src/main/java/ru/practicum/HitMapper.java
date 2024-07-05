@@ -1,22 +1,22 @@
-package ru.practicum.mapper;
+package ru.practicum;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.Utils;
-import ru.practicum.model.Hit;
-import ru.practicum.HitDto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HitMapper {
+
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Hit mapToHit(HitDto hitDto) {
         Hit hit = new Hit();
         hit.setApp(hitDto.getApp());
         hit.setUri(hitDto.getUri());
         hit.setIp(hitDto.getIp());
-        hit.setTimestamp(LocalDateTime.parse(hitDto.getTimestamp(), Utils.DATE_FORMATTER));
+        hit.setTimestamp(LocalDateTime.parse(hitDto.getTimestamp(), formatter));
         return hit;
     }
 

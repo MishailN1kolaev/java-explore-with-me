@@ -1,13 +1,8 @@
-package ru.practicum.service;
+package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.HitDto;
-import ru.practicum.Utils;
-import ru.practicum.repository.HitRepository;
-import ru.practicum.ViewStats;
-import ru.practicum.mapper.HitMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,8 +21,8 @@ public class HitServiceImpl implements HitService {
 
     @Override
     public List<ViewStats> getHit(String startSt, String endSt, List<String> uris, Boolean unique) {
-        LocalDateTime start = LocalDateTime.parse(startSt, Utils.DATE_FORMATTER);
-        LocalDateTime end = LocalDateTime.parse(endSt, Utils.DATE_FORMATTER);
+        LocalDateTime start = LocalDateTime.parse(startSt, HitMapper.formatter);
+        LocalDateTime end = LocalDateTime.parse(endSt, HitMapper.formatter);
         if (start.isAfter(end)) {
             throw new ru.practicum.exeption.ValidationException("Неверно заданы границы диапазона");
         }
