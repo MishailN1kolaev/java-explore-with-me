@@ -46,6 +46,9 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventFullDto addEvent(NewEventDto newEventDto, Long userId, String path) {
+        if (newEventDto.getParticipantLimit() < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильно задан параметр: лимит участников не может быть отрицательным");
+        }
         Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() -> new NoDataException("Категории не существует"));
         User initiator = userRepository.findById(userId).orElseThrow(() -> new NoDataException("Пользователя не существует"));
 
@@ -315,7 +318,9 @@ public class EventServiceImpl implements EventService {
         if (userEvent.getPaid() != null) {
             event.setPaid(userEvent.getPaid());
         }
-        if (userEvent.getParticipantLimit() != 0) {
+        if (userEvent.getParticipantLimit() < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильно задан параметр: лимит участников не может быть отрицательным");
+        } else if (userEvent.getParticipantLimit() > 0) {
             event.setParticipantLimit(userEvent.getParticipantLimit());
         }
         if (userEvent.getRequestModeration() != null) {
