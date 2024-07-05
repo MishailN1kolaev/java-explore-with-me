@@ -24,11 +24,11 @@ public class PartRequest {
     @Column(name = "created")
     private LocalDateTime created;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "requester_id")
     private User requester;
 

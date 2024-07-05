@@ -1,4 +1,6 @@
 package ru.practicum.model.event;
+
+
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -167,7 +169,7 @@ public class EventServiceImpl implements EventService {
 
         }
         return StreamSupport.stream(foundEvents.spliterator(), false)
-                .map(event -> EventMapper.mapToEventFullDto(event, 0))
+                .map(event -> EventMapper.mapToEventFullDto(event, 1))
                 .collect(Collectors.toList());
 
     }
@@ -322,7 +324,7 @@ public class EventServiceImpl implements EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильно задан параметр: лимит участников не может быть отрицательным");
         } else if (userEvent.getParticipantLimit() > 0) {
             event.setParticipantLimit(userEvent.getParticipantLimit());
-        }
+            }
         if (userEvent.getRequestModeration() != null) {
             event.setRequestModeration(userEvent.getRequestModeration());
         }

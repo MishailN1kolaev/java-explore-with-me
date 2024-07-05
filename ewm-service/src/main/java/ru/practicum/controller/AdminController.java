@@ -51,13 +51,13 @@ public class AdminController {
 
     @GetMapping("/events")
     public List<EventFullDto> getAllEvents(
+            @RequestParam(required = false) List<Long> users,
             @RequestParam(required = false) List<String> states,
+            @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) String rangeStart,
             @RequestParam(required = false) String rangeEnd,
             @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) List<Long> users,
-            @RequestParam(required = false) List<Long> categories
+            @RequestParam(defaultValue = "10") Integer size
     ) {
         return eventService.getEventsByParam(users, states, categories, rangeStart, rangeEnd, from, size);
     }

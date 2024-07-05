@@ -25,7 +25,7 @@ public class Event {
     @Column(name = "annotation")
     private String annotation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category")
     private Category category;
 
@@ -41,11 +41,11 @@ public class Event {
     @Column(name = "event_date")
     private LocalDateTime eventDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "initiator")
     private User initiator;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "location")
     private Location location;
 
