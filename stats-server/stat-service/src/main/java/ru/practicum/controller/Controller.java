@@ -1,9 +1,12 @@
-package ru.practicum;
+package ru.practicum.controller;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.HitDto;
+import ru.practicum.service.HitService;
+import ru.practicum.ViewStats;
 
 import java.util.List;
 
