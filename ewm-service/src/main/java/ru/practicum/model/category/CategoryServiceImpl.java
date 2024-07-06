@@ -11,6 +11,7 @@ import ru.practicum.model.event.EventRepository;
 import ru.practicum.model.exeption.AlreadyExistException;
 import ru.practicum.model.exeption.NoDataException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public void deleteCategory(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new NoDataException("Категории не существует"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Категории не существует"));
         if (eventRepository.findAll().stream()
                 .anyMatch(event -> event.getCategory().equals(category))) {
             throw new AlreadyExistException("Невозможно удалить категория, так как к ней привязаны события");
@@ -45,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto updateCategory(Long id, String newName) {
-        Category updateCategory = categoryRepository.findById(id).orElseThrow(() -> new NoDataException("Категории не существует"));
+        Category updateCategory = categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Категории не существует"));
         if (categoryRepository.findAll().stream()
                 .anyMatch(category -> category.getName().equals(newName)) && !updateCategory.getName().equals(newName)) {
             throw new AlreadyExistException("Категория с таким названием уже существует");
@@ -65,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(@PathVariable Long catId) {
-        return CategoryMapper.mapToCategoryDto(categoryRepository.findById(catId).orElseThrow(() -> new NoDataException("Категория не существует")));
+        return CategoryMapper.mapToCategoryDto(categoryRepository.findById(catId).orElseThrow(() -> new EntityNotFoundException("Категория не существует")));
     }
 
 }

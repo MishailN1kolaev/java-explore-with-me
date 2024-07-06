@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface UserService {
 
-    @Transactional
     UserDto createUser(NewUserRequest newUserRequest);
 
     List<UserDto> getUsers(List<Long> ids, Integer from, Integer size);

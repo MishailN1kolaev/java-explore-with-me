@@ -14,7 +14,11 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
     @Query(value = "select * from events e " +
             "join users u on e.initiator = u.id " +
             "join category c on e.category = c.id " +
-            "where u.id in :initiatorIds and e.state in :states and c.id in :categoryIds and e.event_date between :rangeStart and :rangeEnd",
+            "where u.id in :initiatorIds " +
+            "and e.state in :states " +
+            "and c.id in :categoryIds " +
+            "and e.event_date between :rangeStart " +
+            "and :rangeEnd",
             nativeQuery = true)
     List<Event> getEvents(@Param("initiatorIds") List<Long> initiatorIds,
                           @Param("states") List<String> states,

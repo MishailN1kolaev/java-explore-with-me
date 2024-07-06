@@ -1,9 +1,7 @@
 package ru.practicum.model.event;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.location.Location;
 import ru.practicum.model.user.User;
@@ -13,7 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Event {
