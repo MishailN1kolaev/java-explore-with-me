@@ -9,7 +9,6 @@ import ru.practicum.model.category.categoryDto.CategoryDto;
 import ru.practicum.model.category.categoryDto.NewCategoryDto;
 import ru.practicum.model.event.EventRepository;
 import ru.practicum.model.exeption.AlreadyExistException;
-import ru.practicum.model.exeption.NoDataException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
