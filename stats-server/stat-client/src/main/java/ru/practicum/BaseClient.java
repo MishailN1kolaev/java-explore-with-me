@@ -21,6 +21,10 @@ public class BaseClient {
         return get(path, null);
     }
 
+    protected ResponseEntity<Object> get(String path, LocalDateTime start, LocalDateTime end) {
+        return get(path, null);
+    }
+
     protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
         return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }

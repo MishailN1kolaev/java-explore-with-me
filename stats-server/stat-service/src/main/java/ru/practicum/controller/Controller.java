@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.HitDto;
 import ru.practicum.Utils;
 import ru.practicum.service.HitService;
+import ru.practicum.ViewStats;
 
 import java.util.List;
 
@@ -23,10 +24,10 @@ public class Controller {
     }
 
     @GetMapping(Utils.STATS)
-    public List getHits(@NonNull @RequestParam String start,
-                        @NonNull @RequestParam String end,
-                        @RequestParam(required = false) List<String> uris,
-                        @RequestParam(defaultValue = "false") Boolean unique
+    public List<ViewStats> getHits(@NonNull @RequestParam String start,
+                                   @NonNull @RequestParam String end,
+                                   @RequestParam(required = false) List<String> uris,
+                                   @RequestParam(defaultValue = "false") Boolean unique
     ) {
         return hitService.getHit(start, end, uris, unique);
     }
