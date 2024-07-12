@@ -2,6 +2,7 @@ package ru.practicum.model.event;
 
 import ru.practicum.model.category.Category;
 import ru.practicum.model.category.CategoryMapper;
+import ru.practicum.model.comment.commentDto.CommentDto;
 import ru.practicum.model.event.eventDto.EventFullDto;
 import ru.practicum.model.event.eventDto.EventShortDto;
 import ru.practicum.model.event.eventDto.NewEventDto;
@@ -13,6 +14,7 @@ import ru.practicum.model.user.UserMapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class EventMapper {
 
@@ -39,7 +41,7 @@ public class EventMapper {
     }
 
 
-    public static EventFullDto mapToEventFullDto(Event event, int views) {
+    public static EventFullDto mapToEventFullDto(Event event, int views, List<CommentDto> commentDtoList) {
         return new EventFullDto(
                 event.getId(),
                 event.getAnnotation(),
@@ -56,7 +58,8 @@ public class EventMapper {
                 event.getRequestModeration(),
                 event.getState(),
                 event.getTitle(),
-                views
+                views,
+                commentDtoList
         );
     }
 

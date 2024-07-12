@@ -22,11 +22,17 @@ import ru.practicum.model.location.LocationMapper;
 import ru.practicum.model.location.LocationRepository;
 import ru.practicum.model.user.User;
 import ru.practicum.model.user.UserRepository;
+import ru.practicum.model.comment.Comment;
+import ru.practicum.model.comment.CommentMapper;
+import ru.practicum.model.comment.CommentRepository;
+import ru.practicum.model.comment.commentDto.CommentDto;
+import ru.practicum.model.comment.commentDto.NewCommentDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +44,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+    private final CommentRepository commentRepository;
     private final HitClient hitClient;
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -54,7 +61,7 @@ public class EventServiceImpl implements EventService {
         int views = 0;
         Location location = locationRepository.save(LocationMapper.mapToLocation(newEventDto.getLocation()));
         return EventMapper.mapToEventFullDto(eventRepository.save(EventMapper
-                .mapToEvent(newEventDto, category, initiator, location)), views);
+                .mapToEvent(newEventDto, category, initiator, location)), views, new ArrayList<>());
     }
 
     @Transactional
@@ -100,7 +107,10 @@ public class EventServiceImpl implements EventService {
         if (adminEvent.getTitle() != null) {
             event.setTitle(adminEvent.getTitle());
         }
-        return EventMapper.mapToEventFullDto(eventRepository.save(event), 5);
+        List<CommentDto> commentDtoList = commentRepository.findByEventId(eventId).stream()
+                .map(CommentMapper::mapToCommentDto)
+                .collect(Collectors.toList());
+        return EventMapper.mapToEventFullDto(eventRepository.save(event), 5, commentDtoList);
     }
 
     @Override
@@ -161,12 +171,12 @@ public class EventServiceImpl implements EventService {
             foundEvents = eventRepository.findAll(byUserId, page);
         } else {
             return eventRepository.findAll(page).stream()
-                    .map(event -> EventMapper.mapToEventFullDto(event, 0))
+                    .map(event -> EventMapper.mapToEventFullDto(event, 0, commentDtoList(event.getId())))
                     .collect(Collectors.toList());
 
         }
         return foundEvents.stream()
-                .map(event -> EventMapper.mapToEventFullDto(event, 0))
+                .map(event -> EventMapper.mapToEventFullDto(event, 0, commentDtoList(event.getId())))
                 .collect(Collectors.toList());
 
     }
@@ -177,7 +187,7 @@ public class EventServiceImpl implements EventService {
                                                   Integer size) {
         PageRequest page = PageRequest.of(from / size, size);
         return eventRepository.findAllEventByInitiatorId(initiatorId, page).stream()
-                .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -222,12 +232,12 @@ public class EventServiceImpl implements EventService {
             foundEvents = eventRepository.getEventsByAllParam(text, categories, paid, start, end, page);
             if (sort.equals("EVENT_DATE")) {
                 return foundEvents.stream()
-                        .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                        .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                         .sorted(Comparator.comparing(EventFullDto::getEventDate))
                         .collect(Collectors.toList());
             } else {
                 return foundEvents.stream()
-                        .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                        .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                         .sorted(Comparator.comparing(EventFullDto::getViews))
                         .collect(Collectors.toList());
             }
@@ -238,7 +248,7 @@ public class EventServiceImpl implements EventService {
                 && onlyAvailable != null) {
             foundEvents = eventRepository.getEventsByTextCatPaid(text, categories, paid, page);
             return foundEvents.stream()
-                    .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                    .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                     .collect(Collectors.toList());
         } else if (text != null
                 && paid != null
@@ -246,22 +256,22 @@ public class EventServiceImpl implements EventService {
                 && rangeEnd != null) {
             foundEvents = eventRepository.getEventsByTextCat(text, categories, page);
             return foundEvents.stream()
-                    .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                    .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                     .collect(Collectors.toList());
         } else if (text != null
                 && paid != null) {
             foundEvents = eventRepository.getEventsByTextCat(text, categories, page);
             return foundEvents.stream()
-                    .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                    .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                     .collect(Collectors.toList());
         } else if (text != null) {
             foundEvents = eventRepository.getEventsByText(text, page);
             return foundEvents.stream()
-                    .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                    .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                     .collect(Collectors.toList());
         } else {
             return eventRepository.findAll(page).stream()
-                    .map(event -> EventMapper.mapToEventFullDto(event, 1))
+                    .map(event -> EventMapper.mapToEventFullDto(event, 1, commentDtoList(event.getId())))
                     .collect(Collectors.toList());
         }
     }
@@ -278,12 +288,12 @@ public class EventServiceImpl implements EventService {
                 request.getRemoteAddr(),
                 LocalDateTime.now().format(formatter)
         ));
-        return EventMapper.mapToEventFullDto(event, 1);
+        return EventMapper.mapToEventFullDto(event, 1, commentDtoList(eventId));
     }
 
     @Override
     public EventFullDto getEventByInitiator(Long userId, Long eventId) {
-        return EventMapper.mapToEventFullDto(eventRepository.findByIdAndInitiatorId(eventId, userId), 5);
+        return EventMapper.mapToEventFullDto(eventRepository.findByIdAndInitiatorId(eventId, userId), 5, commentDtoList(eventId));
     }
 
     @Transactional
@@ -334,7 +344,55 @@ public class EventServiceImpl implements EventService {
         if (userEvent.getTitle() != null) {
             event.setTitle(userEvent.getTitle());
         }
-        return EventMapper.mapToEventFullDto(eventRepository.save(event), 5);
+        return EventMapper.mapToEventFullDto(eventRepository.save(event), 5, commentDtoList(eventId));
     }
 
+    @Transactional
+    @Override
+    public CommentDto createComment(Long eventId, NewCommentDto commentDto, Long userId) {
+        if (commentDto.getText().isBlank()) {
+            throw new ValidationException("Комментарий не может быть пустым");
+        }
+        User author = userRepository.findById(userId).orElseThrow(() -> new NoDataException("Пользователя не существует"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoDataException("События не существует"));
+        return CommentMapper.mapToCommentDto(commentRepository.save(CommentMapper.mapToComment(commentDto, event, author)));
+    }
+
+    @Transactional
+    @Override
+    public CommentDto updateCommentByAuthor(NewCommentDto commentDto, Long userId, Long commentId) {
+        if (commentDto.getText().isBlank()) {
+            throw new ValidationException("Комментарий не может быть пустым");
+        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoDataException("Комментария не существует"));
+        User author = userRepository.findById(userId).orElseThrow(() -> new NoDataException("Пользователя не существует"));
+        if (author != comment.getAuthor()) {
+            throw new ValidationException("Пользователь не является автором данного комментария");
+        }
+        comment.setText(commentDto.getText());
+        return CommentMapper.mapToCommentDto(comment);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCommentByUser(Long userId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoDataException("Комментария не существует"));
+        User author = userRepository.findById(userId).orElseThrow(() -> new NoDataException("Пользователя не существует"));
+        if (author != comment.getAuthor()) {
+            throw new ValidationException("Пользователь не является автором данного комментария");
+        }
+        commentRepository.deleteById(commentId);
+    }
+
+    @Transactional
+    public void deleteCommentByAdmin(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
+    private List<CommentDto> commentDtoList(Long eventId) {
+        return commentRepository.findByEventId(eventId).stream()
+                .map(CommentMapper::mapToCommentDto)
+                .collect(Collectors.toList());
+
+    }
 }
